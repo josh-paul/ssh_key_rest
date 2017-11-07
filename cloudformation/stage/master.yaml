@@ -1,0 +1,127 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: "ssh key sample rest api infrastructure"
+
+Parameters:
+  Stage:
+    Type: "String"
+    Description: "Name of the stage where the template is deployed to."
+
+Resources:
+  LambdaExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+      Policies:
+        - PolicyName: "LambdaPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "logs:*"
+                  - "xray:PutTelemetryRecords"
+                  - "xray:PutTraceSegments"
+                Resource: "*"
+  APIGatewayLambdaInvokeRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "apigateway.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: "LambdaInvokePolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "lambda:InvokeFunction"
+                  - "logs:*"
+                Resource: "*"
+
+#  # API Gateway
+#  APICustomDomainName:
+#    Type: 'AWS::ApiGateway::DomainName'
+#    Properties:
+#      CertificateArn: !If [ "IsProduction", !Ref "CertificateArnProd", !Ref "CertificateArnDev" ]
+#      DomainName:
+#        Fn::If:
+#          - "IsProduction"
+#          # If production, just use "api." + the base domain name.
+#          - !Sub "api.${DomainName}"
+#          # If not production, prepend the stage name as a subdomain.
+#          # We also support api-joeuser.dev.example.com subdomains for
+#          # individual developer dev environments.
+#          - Fn::If:
+#            - "IsCustomStage"
+#            - !Sub "api-${Stage}.dev.${DomainName}"
+#            - !Sub "api.dev.${DomainName}"
+#  # Route 53 record for the custom domain
+#  DNSCustomDomain:
+#    Type: 'AWS::Route53::RecordSet'
+#    Properties:
+#      AliasTarget:
+#        DNSName:
+#          Fn::GetAtt:
+#            - 'APICustomDomainName'
+#            - 'DistributionDomainName'
+#        HostedZoneId: 'Z2FDTNDATAQYW2'
+#      Name: !Ref 'APICustomDomainName'
+#      Type: 'A'
+#      # The hosted zone name needs to end with a period.
+#      HostedZoneName: !If [ "IsProduction", !Sub "${DomainName}.", !Sub "dev.${DomainName}." ]
+
+  # CloudWatch Alarms
+  LambdaThrottlesAlarm:
+    Type: "AWS::CloudWatch::Alarm"
+    Condition: "IsNotCustomStage"
+    Properties:
+      AlarmDescription: "RMS Portal API Lambda Throttles"
+      AlarmActions:
+        - !Ref "AlertTopicArn"
+      OKActions:
+        - !Ref "AlertTopicArn"
+      TreatMissingData: "notBreaching"
+      Unit: "Count"
+      ComparisonOperator: "GreaterThanOrEqualToThreshold"
+      EvaluationPeriods: 2
+      MetricName: "Throttles"
+      Namespace: "AWS/Lambda"
+      Period: 300
+      Statistic: "Sum"
+      Threshold: 1
+      Dimensions:
+        - Name: "FunctionName"
+          Value: !Ref "ServiceName"
+        - Name: "Resource"
+          Value: !Sub "${ServiceName}:${Stage}"
+
+Outputs:
+  LambdaExecutionRole:
+    Description: "Name of the IAM role used for executing the Lambda function"
+    Value: !Ref "LambdaExecutionRole"
+  LambdaExecutionRoleArn:
+    Description: "ARN of the IAM role used for executing the Lambda function"
+    Value: !GetAtt "LambdaExecutionRole.Arn"
+  APIGatewayLambdaInvokeRole:
+    Description: "Name of the IAM role assumed by API Gateway to invoke the Lambda function"
+    Value: !Ref "APIGatewayLambdaInvokeRole"
+  APIGatewayLambdaInvokeRoleArn:
+    Description: "ARN of the IAM role assumed by API Gateway to invoke the Lambda function"
+    Value: !GetAtt "APIGatewayLambdaInvokeRole.Arn"
+  CustomDomain:
+    Description: "API Gateway custom domain"
+    Value: !Ref "APICustomDomainName"

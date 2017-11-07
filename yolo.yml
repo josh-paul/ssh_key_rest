@@ -1,0 +1,58 @@
+name: ssh-key-rest
+
+accounts:
+  - name: main
+    account_number: '957704715687'
+    default_region: us-east-1
+
+templates:
+  # Templates for account-specific infrastructure.
+  # Consider this to be baseline infrastructure, which may be shared by
+  # multiple stages. For example, "user" stages which use the `default`
+  # stage configuration may share an account with `dev` or `staging`.
+  account:
+    path: cloudformation/account
+  # Templates to deploy to an individual stage.
+  stage:
+    path: cloudformation/stage
+    params:
+      Stage: '{{ stage.name }}'
+stages:
+  default:
+    account: main
+    region: us-east-1
+  main:
+    account: main
+    region: us-east-1
+
+services:
+  ssh-key-rest:
+    type: lambda-apigateway
+    build:
+      working_dir: .
+      dependencies: requirements.txt
+      dist_dir: dist
+    deploy:
+      apigateway:
+        rest_api_name: ssh-key-rest
+        swagger_template: ./gateway/proxy.yml
+        domains:
+          - domain_name: '{{ stage.outputs.CustomDomain }}'
+            base_path: /
+        integration:
+          type: AWS
+          uri: 'arn:aws:apigateway:{{ stage.region }}:lambda:path/2015-03-31/functions/arn:aws:lambda:{{ stage.region }}:{{ account.account_number }}:function:rmsportal-api:{{ stage.name }}/invocations'
+          passthroughBehavior: WHEN_NO_MATCH
+          credentials: 'arn:aws:iam::{{ account.account_number }}:role/{{ stage.outputs.APIGatewayLambdaInvokeRole }}'
+
+      lambda_function_configuration:
+        FunctionName: ssh-key-rest
+        Role: '{{ stage.outputs.LambdaExecutionRoleArn }}'
+        Handler: handler.lambda_handler
+        # Optional parameters:
+        Description: SSH Key API
+        Timeout: 30
+        MemorySize: 512
+        Runtime: python3.6
+        TracingConfig:
+          Mode: Active
