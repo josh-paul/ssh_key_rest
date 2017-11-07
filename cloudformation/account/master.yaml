@@ -3,11 +3,22 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'ssh key sample rest api - Account-level shared infrastructure'
 
 Resources:
+  # API Gateway
+  APIGateway:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Name: 'ssh-key-rest'
+      Description: 'SSH Key REST API'
+  # SNS Topic for alerts
+  AlertTopic:
+    Type: 'AWS::SNS::Topic'
+    Properties:
+      DisplayName: 'Alerts'
   # CloudWatch Alarms for monitoring
   4XXErrorAlert:
     Type: 'AWS::CloudWatch::Alarm'
     Properties:
-      AlarmName: !If [ 'IsProduction', 'APIGateway-4XX-prod', 'APIGateway-4XX-dev' ]
+      AlarmName: 'APIGateway-4XX-dev'
       AlarmDescription: '4xx Errors on API Gateway'
       ActionsEnabled: true
       AlarmActions:
@@ -18,9 +29,9 @@ Resources:
       MetricName: '4XXError'
       Dimensions:
         - Name: 'ApiName'
-          Value: 'rmsportal-api'
+          Value: 'ssh-key-rest'
         - Name: 'Stage'
-          Value: !If [ 'IsProduction', 'prod', 'dev' ]
+          Value: 'dev'
       EvaluationPeriods: 2
       Period: 60
       ComparisonOperator: 'GreaterThanThreshold'
@@ -30,7 +41,7 @@ Resources:
   5XXErrorAlert:
     Type: 'AWS::CloudWatch::Alarm'
     Properties:
-      AlarmName: !If [ 'IsProduction', 'APIGateway-5XX-prod', 'APIGateway-5XX-dev' ]
+      AlarmName: 'APIGateway-5XX-dev'
       AlarmDescription: '5xx Errors on API Gateway'
       ActionsEnabled: true
       AlarmActions:
@@ -41,12 +52,17 @@ Resources:
       MetricName: '5XXError'
       Dimensions:
         - Name: 'ApiName'
-          Value: 'rmsportal-api'
+          Value: 'ssh-key-rest'
         - Name: 'Stage'
-          Value: !If [ 'IsProduction', 'prod', 'dev' ]
+          Value: 'dev'
       EvaluationPeriods: 2
       Period: 60
       ComparisonOperator: 'GreaterThanThreshold'
       Threshold: 0
       Statistic: 'Maximum'
-      TreatMissingData: 'notBreaching
+      TreatMissingData: 'notBreaching'
+
+Outputs:
+  AlertTopicArn:
+    Description: 'ARN of the SNS topic used for alerting'
+    Value: !Ref 'AlertTopic'

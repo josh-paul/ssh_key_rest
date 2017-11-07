@@ -6,6 +6,13 @@ Parameters:
   Stage:
     Type: "String"
     Description: "Name of the stage where the template is deployed to."
+  AlertTopicArn:
+    Type: "String"
+    Description: "ARN of the SNS topic used for alerting"
+  ServiceName:
+    Type: "String"
+    Description: "Common name for the service associated with this stack"
+    Default: "ssh-key-rest"
 
 Resources:
   LambdaExecutionRole:
@@ -87,7 +94,6 @@ Resources:
   # CloudWatch Alarms
   LambdaThrottlesAlarm:
     Type: "AWS::CloudWatch::Alarm"
-    Condition: "IsNotCustomStage"
     Properties:
       AlarmDescription: "RMS Portal API Lambda Throttles"
       AlarmActions:
@@ -122,6 +128,6 @@ Outputs:
   APIGatewayLambdaInvokeRoleArn:
     Description: "ARN of the IAM role assumed by API Gateway to invoke the Lambda function"
     Value: !GetAtt "APIGatewayLambdaInvokeRole.Arn"
-  CustomDomain:
-    Description: "API Gateway custom domain"
-    Value: !Ref "APICustomDomainName"
+#  CustomDomain:
+#    Description: "API Gateway custom domain"
+#    Value: !Ref "APICustomDomainName"

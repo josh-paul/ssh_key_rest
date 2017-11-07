@@ -12,11 +12,13 @@ templates:
   # stage configuration may share an account with `dev` or `staging`.
   account:
     path: cloudformation/account
+    params: {}
   # Templates to deploy to an individual stage.
   stage:
     path: cloudformation/stage
     params:
       Stage: '{{ stage.name }}'
+      AlertTopicArn: '{{ account.outputs.AlertTopicArn }}'
 stages:
   default:
     account: main
@@ -32,16 +34,20 @@ services:
       working_dir: .
       dependencies: requirements.txt
       dist_dir: dist
+      include:
+        - ssh_key
+        - handler.py
+        - ./gateway/proxy.yml
     deploy:
       apigateway:
         rest_api_name: ssh-key-rest
         swagger_template: ./gateway/proxy.yml
-        domains:
-          - domain_name: '{{ stage.outputs.CustomDomain }}'
-            base_path: /
+        # domains:
+        #   - domain_name: '{{ stage.outputs.CustomDomain }}'
+        #     base_path: /
         integration:
-          type: AWS
-          uri: 'arn:aws:apigateway:{{ stage.region }}:lambda:path/2015-03-31/functions/arn:aws:lambda:{{ stage.region }}:{{ account.account_number }}:function:rmsportal-api:{{ stage.name }}/invocations'
+          type: AWS_PROXY
+          uri: 'arn:aws:apigateway:{{ stage.region }}:lambda:path/2015-03-31/functions/arn:aws:lambda:{{ stage.region }}:{{ account.account_number }}:function:ssh-key-rest:{{ stage.name }}/invocations'
           passthroughBehavior: WHEN_NO_MATCH
           credentials: 'arn:aws:iam::{{ account.account_number }}:role/{{ stage.outputs.APIGatewayLambdaInvokeRole }}'
 

@@ -1,0 +1,16 @@
+swagger: '2.0'
+info:
+  version: 'v1'
+  title: ssh-key-rest
+  description: SSH Key REST API
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+
+paths:
+  /{proxy+}:
+    x-amazon-apigateway-any-method:
+      responses: {}
