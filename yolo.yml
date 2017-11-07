@@ -42,9 +42,9 @@ services:
       apigateway:
         rest_api_name: ssh-key-rest
         swagger_template: ./gateway/proxy.yml
-        # domains:
-        #   - domain_name: '{{ stage.outputs.CustomDomain }}'
-        #     base_path: /
+        domains: 
+          - domain_name: ''
+            base_path: /
         integration:
           type: AWS_PROXY
           uri: 'arn:aws:apigateway:{{ stage.region }}:lambda:path/2015-03-31/functions/arn:aws:lambda:{{ stage.region }}:{{ account.account_number }}:function:ssh-key-rest:{{ stage.name }}/invocations'
