@@ -23,6 +23,7 @@ post_schema = {
     'required': ['publicKey']
 }
 
+
 class KeyResource(object):
     def fingerprint(self, key):
         '''
