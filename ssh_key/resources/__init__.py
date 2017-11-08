@@ -1,1 +1,1 @@
-from .ssh import KeyResource # NOQA
+from .ssh import KeyResource  # NOQA
