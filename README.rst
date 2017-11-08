@@ -19,6 +19,22 @@ work with service is contained in the repository.
 It uses CloudFormation to define the resources required outside of API-Gateway and Lambda. Then 
 the yolo utility builds the Lambda source files and can deploy them.
 
+The choice of Falcon for the HTTP framework is done to make the application very portable. Due to
+the routing being handled in the application layer and API-Gateway serving as a proxy, this
+application can be ported very easily to be run in Docker or on dedicated systems. This also comes
+in handy for testing things locally. You can simply start the web server via any WSGI application.
+The sample here uses gunicorn.
+::
+
+    $ gunicorn --reload handler:api
+    [2017-11-07 21:31:19 -0800] [55964] [INFO] Starting gunicorn 19.7.1
+    [2017-11-07 21:31:19 -0800] [55964] [INFO] Listening at: http://127.0.0.1:8000 (55964)
+    [2017-11-07 21:31:19 -0800] [55964] [INFO] Using worker: sync
+    [2017-11-07 21:31:19 -0800] [55967] [INFO] Booting worker with pid: 55967
+
+Running the above command starts the server on localhost:8000. Since the routing is in the
+application, this will work the same way as when it is running in AWS via API-Gateway and Lambda.
+
 Sample usage of the API.
 ::
 
