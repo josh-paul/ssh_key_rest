@@ -1,5 +1,8 @@
 SSH Key Rest API
 ================
+.. image:: https://travis-ci.org/josh-paul/ssh_key_rest.svg?branch=master
+    :target: https://travis-ci.org/josh-paul/ssh_key_rest
+
 .. image:: https://api.codeclimate.com/v1/badges/85faf1df776c781f83f6/maintainability
    :target: https://codeclimate.com/github/josh-paul/ssh_key_rest/maintainability
    :alt: Maintainability
@@ -7,7 +10,7 @@ SSH Key Rest API
 .. image:: https://codecov.io/gh/josh-paul/ssh_key_rest/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/josh-paul/ssh_key_rest
 
-A simple RESTful API for get a new SSH keypair and fingerprinting an existing SSH public key.
+A simple RESTful API for obtaining a new SSH keypair and fingerprinting an existing SSH public key.
 
 This repository is a sample of using the yolo utility (http://yolocli.readthedocs.io/en/latest/) to 
 deploy a stateless REST service running on AWS via API-Gateway and Lambda. Everything needed to 
