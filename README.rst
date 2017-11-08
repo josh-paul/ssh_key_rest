@@ -1,5 +1,11 @@
 SSH Key Rest API
 ================
+.. image:: https://api.codeclimate.com/v1/badges/85faf1df776c781f83f6/maintainability
+   :target: https://codeclimate.com/github/josh-paul/ssh_key_rest/maintainability
+   :alt: Maintainability
+
+.. image:: https://codecov.io/gh/josh-paul/ssh_key_rest/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/josh-paul/ssh_key_rest
 
 A simple RESTful API for get a new SSH keypair and fingerprinting an existing SSH public key.
 
@@ -67,9 +73,15 @@ Sample usage of the API.
      'openSSH': '71:99:3f:4d:bc:83:0a:a1:ce:4f:d4:be:bd:4a:89:11'}
 
 Sample usage of the yolo utility to deploy the infra / build/deploy the lambda service.
+
+Specifiy the profile with your account credentials for AWS
 ::
 
     $ export AWS_PROFILE_NAME='personal'
+
+Deploy the account level cloudformation stack. These are resources that will rarely change.
+::
+
     $ yolo deploy-infra --account main
     checking for bucket ssh-key-rest-957704715687...
     uploading s3://ssh-key-rest-957704715687/templates/account/2017-11-07_23-09-54-484093/master.yaml...
@@ -77,6 +89,10 @@ Sample usage of the yolo utility to deploy the infra / build/deploy the lambda s
     creating stack "arn:aws:cloudformation:us-east-1:957704715687:stack/ssh-key-rest-BASELINE-957704715687/c4d8c1b0-c410-11e7-8095-50d5cd24fac6"...
     Still creating stack, please be patient...
     stack "ssh-key-rest-BASELINE-957704715687" created.
+
+Deploy the stage level cloudformation stack.  These are resources that are unique to each stage.
+::
+
     $ yolo deploy-infra --stage josh
     checking for bucket ssh-key-rest-957704715687...
     uploading s3://ssh-key-rest-957704715687/templates/stages/josh/2017-11-07_23-10-39-964428/master.yaml...
@@ -84,6 +100,10 @@ Sample usage of the yolo utility to deploy the infra / build/deploy the lambda s
     creating stack "arn:aws:cloudformation:us-east-1:957704715687:stack/ssh-key-rest-957704715687-josh/dfe92990-c410-11e7-9814-500c286014fd"...
     Still creating stack, please be patient...
     stack "ssh-key-rest-957704715687-josh" created.
+
+Build your lambda code into the zip that will be uploaded to AWS.
+::
+
     $ yolo build-lambda --service ssh-key-rest --stage josh
     Building ssh-key-rest for stage "josh"
     2017-11-07 15:11:32 [WARNING] [yolo.build.python_build_lambda_function:59]: Checking dependencies cache...
@@ -91,6 +111,10 @@ Sample usage of the yolo utility to deploy the infra / build/deploy the lambda s
     2017-11-07 15:11:33 [WARNING] [yolo.build.python_build_lambda_function:91]: Build container started, waiting for completion (ID: 2e314b0879)
     2017-11-07 15:11:43 [WARNING] [yolo.build.python_build_lambda_function:94]: Build finished.
     2017-11-07 15:11:43 [WARNING] [yolo.build.remove_container:143]: Removing build container
+
+Deploy the lambda code and apply the API-Gateway settings.
+::
+
     $ yolo deploy-lambda --service ssh-key-rest --stage josh --from-local
     checking for bucket ssh-key-rest-957704715687...
     Deploying ssh-key-rest from local to stage "josh"...
@@ -105,3 +129,5 @@ Sample usage of the yolo utility to deploy the infra / build/deploy the lambda s
     Configuring API Gateway/Lambda base path mapping...
     Domain name is empty, skipping base path mapping.
     Done!
+
+That is it. The service is now up and running.
