@@ -35,11 +35,13 @@ class KeyResource(object):
 
     def on_get(self, request, response):
         '''
-        Generate and return a private and public key for use with OpenSSH. Uses a key size of 2048.
+        Generate and return a private and public key for use with OpenSSH. Default key size is 2048
+        Can be modified via query string arg keySize.
         '''
+        key_size = request.get_param_as_int('keySize', min=768) or 2048
         key = rsa.generate_private_key(
             public_exponent=65537,
-            key_size=2048,
+            key_size=key_size,
             backend=default_backend()
         )
 
@@ -54,7 +56,7 @@ class KeyResource(object):
                 format=serialization.PublicFormat.OpenSSH
             ).decode('utf-8')
         }
-        response.status = falcon.HTTP_200
+        response.status = falcon.HTTP_201
 
     @jsonschema.validate(post_schema)
     def on_post(self, request, response):
@@ -93,4 +95,4 @@ class KeyResource(object):
             response.status = falcon.HTTP_200
         except (binascii.Error, ValueError):
             response.media = {'error': 'Key is not in the proper format or contains extra data.'}
-            response.status = falcon.HTTP_422
+            response.status = falcon.HTTP_400

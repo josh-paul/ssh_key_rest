@@ -79,17 +79,44 @@ def test_key_creation(client):
     '''
     Verify that the returned keys can be loaded as valid keys by cryptography.
     '''
-    response = client.simulate_get('/ssh/key')
+    response1 = client.simulate_get('/ssh/key')
 
-    private_key = serialization.load_pem_private_key(
-        response.json['privateKey'].encode('utf-8'),
+    private_key1 = serialization.load_pem_private_key(
+        response1.json['privateKey'].encode('utf-8'),
         password=None,
         backend=default_backend()
     )
-    public_key = serialization.load_ssh_public_key(
-        response.json['publicKey'].encode('utf-8'),
+    public_key1 = serialization.load_ssh_public_key(
+        response1.json['publicKey'].encode('utf-8'),
         backend=default_backend()
     )
 
-    assert isinstance(private_key, cryptography.hazmat.backends.openssl.rsa._RSAPrivateKey)
-    assert isinstance(public_key, cryptography.hazmat.backends.openssl.rsa._RSAPublicKey)
+    response2 = client.simulate_get('/ssh/key', query_string='keySize=4096')
+
+    private_key2 = serialization.load_pem_private_key(
+        response2.json['privateKey'].encode('utf-8'),
+        password=None,
+        backend=default_backend()
+    )
+    public_key2 = serialization.load_ssh_public_key(
+        response2.json['publicKey'].encode('utf-8'),
+        backend=default_backend()
+    )
+
+    assert isinstance(private_key1, cryptography.hazmat.backends.openssl.rsa._RSAPrivateKey)
+    assert isinstance(public_key1, cryptography.hazmat.backends.openssl.rsa._RSAPublicKey)
+    assert isinstance(private_key2, cryptography.hazmat.backends.openssl.rsa._RSAPrivateKey)
+    assert isinstance(public_key2, cryptography.hazmat.backends.openssl.rsa._RSAPublicKey)
+
+
+def test_too_small_key_size(client):
+    '''
+    Test for too small key size passed in. RSA keys have minimum 768 size.
+    '''
+    response = client.simulate_get('/ssh/key', query_string='keySize=512')
+
+    too_small = {
+        'title': 'Invalid parameter',
+        'description': 'The "keySize" parameter is invalid. The value must be at least 768'
+    }
+    assert response.json == too_small
