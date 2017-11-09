@@ -1,0 +1,40 @@
+swagger: '2.0'
+info:
+  title: SSH Key REST API
+  version: '0.1'
+consumes:
+  - application/json
+produces:
+  - application/json
+basePath: /
+paths:
+  /ssh/key:
+    get:
+      description: Specify key size to generate
+      parameters:
+        - name: keySize
+          in: query
+          required: false
+          type: number
+          default: 2048
+      responses:
+        201:
+          description: Created
+    post:
+      summary: Fingerprint the passed ssh public key
+      parameters:
+        - in: body
+          name: public-key
+          required: true
+          schema:
+            type: object
+            required:
+              - publicKey
+            properties:
+              publicKey:
+                type: string
+      responses:
+        200:
+          description: return fingerprints
+        400:
+          description: Key is not in the proper format or contains extra data
