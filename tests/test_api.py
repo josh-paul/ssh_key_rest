@@ -38,6 +38,43 @@ def test_fingerprinting(client):
     assert response.json == fingerprints
 
 
+def test_invalid_fingerprint_payload(client):
+    '''
+    Test for invalid keys passed in.
+    '''
+    body1 = json.dumps(
+        {'publicKey': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBiujz7D4ecEOM9V7objCVDQErZucSKWK'}
+    )
+
+    body2 = json.dumps({'publicKey': ''})
+
+    response1 = client.simulate_post('/ssh/key', body=body1)
+    response2 = client.simulate_post('/ssh/key', body=body2)
+
+    invalid_key = {'error': 'Key is not in the proper format or contains extra data.'}
+    assert response1.json == invalid_key
+    assert response2.json == invalid_key
+
+
+def test_invalid_payload_validation(client):
+    '''
+    Test for schema validation behavior.
+    '''
+    body = json.dumps(
+        {
+            'twiddle-me-this': 'twiddle-me-that'
+        }
+    )
+
+    response = client.simulate_post('/ssh/key', body=body)
+
+    validation_response = {
+        'title': 'Failed data validation',
+        'description': '\'publicKey\' is a required property'
+    }
+    assert response.json == validation_response
+
+
 def test_key_creation(client):
     '''
     Verify that the returned keys can be loaded as valid keys by cryptography.

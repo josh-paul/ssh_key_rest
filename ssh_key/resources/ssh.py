@@ -1,4 +1,5 @@
 import base64
+import binascii
 import hashlib
 import logging
 
@@ -69,23 +70,27 @@ class KeyResource(object):
         OpenSSH
         https://tools.ietf.org/html/rfc4716#section-4
         '''
-        key = serialization.load_ssh_public_key(
-            request.media.get('publicKey').encode('utf-8'),
-            backend=default_backend()
-        )
-        valid = key.public_bytes(
-            encoding=serialization.Encoding.OpenSSH,
-            format=serialization.PublicFormat.OpenSSH
-        )
-        response.media = {
-            'ec2': self.fingerprint(
-                key.public_bytes(
-                    encoding=serialization.Encoding.DER,
-                    format=serialization.PublicFormat.SubjectPublicKeyInfo
-                )
-            ),
-            'openSSH': self.fingerprint(
-                base64.b64decode(valid.decode('utf-8').split()[1].encode('ascii'))
+        try:
+            key = serialization.load_ssh_public_key(
+                request.media.get('publicKey').encode('utf-8'),
+                backend=default_backend()
             )
-        }
-        response.status = falcon.HTTP_200
+            valid = key.public_bytes(
+                encoding=serialization.Encoding.OpenSSH,
+                format=serialization.PublicFormat.OpenSSH
+            )
+            response.media = {
+                'ec2': self.fingerprint(
+                    key.public_bytes(
+                        encoding=serialization.Encoding.DER,
+                        format=serialization.PublicFormat.SubjectPublicKeyInfo
+                    )
+                ),
+                'openSSH': self.fingerprint(
+                    base64.b64decode(valid.decode('utf-8').split()[1].encode('ascii'))
+                )
+            }
+            response.status = falcon.HTTP_200
+        except (binascii.Error, ValueError):
+            response.media = {'error': 'Key is not in the proper format or contains extra data.'}
+            response.status = falcon.HTTP_422
