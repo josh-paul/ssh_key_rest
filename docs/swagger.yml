@@ -9,7 +9,7 @@ produces:
 basePath: /
 paths:
   /ssh/key:
-    get:
+    post:
       description: Specify key size to generate
       parameters:
         - name: keySize
@@ -20,6 +20,7 @@ paths:
       responses:
         201:
           description: Created
+  /ssh/key/fingerprint:
     post:
       summary: Fingerprint the passed ssh public key
       parameters:
@@ -34,7 +35,7 @@ paths:
               publicKey:
                 type: string
       responses:
-        200:
+        201:
           description: return fingerprints
         400:
           description: Key is not in the proper format or contains extra data

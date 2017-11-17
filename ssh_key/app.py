@@ -1,6 +1,6 @@
 import falcon
 
-from ssh_key.resources import KeyResource
+from ssh_key.resources import KeyResource, FingerprintResource
 
 
 class Service(falcon.API):
@@ -18,9 +18,11 @@ class Service(falcon.API):
         Pull in all endpoints to class vars.
         '''
         self.key_res = KeyResource()
+        self.fingerprint_res = FingerprintResource()
 
     def setup_routes(self):
         '''
         Map URI routes to the class vars for endpoints.
         '''
         self.add_route('/ssh/key', self.key_res)
+        self.add_route('/ssh/key/fingerprint', self.fingerprint_res)

@@ -29,7 +29,7 @@ def test_fingerprinting(client):
         }
     )
 
-    response = client.simulate_post('/ssh/key', body=body)
+    response = client.simulate_post('/ssh/key/fingerprint', body=body)
 
     fingerprints = {
         'ec2': '0c:9e:f7:f3:48:f5:5f:69:13:7e:7d:a9:e2:46:c2:12',
@@ -48,8 +48,8 @@ def test_invalid_fingerprint_payload(client):
 
     body2 = json.dumps({'publicKey': ''})
 
-    response1 = client.simulate_post('/ssh/key', body=body1)
-    response2 = client.simulate_post('/ssh/key', body=body2)
+    response1 = client.simulate_post('/ssh/key/fingerprint', body=body1)
+    response2 = client.simulate_post('/ssh/key/fingerprint', body=body2)
 
     invalid_key = {'error': 'Key is not in the proper format or contains extra data.'}
     assert response1.json == invalid_key
@@ -66,7 +66,7 @@ def test_invalid_payload_validation(client):
         }
     )
 
-    response = client.simulate_post('/ssh/key', body=body)
+    response = client.simulate_post('/ssh/key/fingerprint', body=body)
 
     validation_response = {
         'title': 'Failed data validation',
@@ -79,7 +79,7 @@ def test_key_creation(client):
     '''
     Verify that the returned keys can be loaded as valid keys by cryptography.
     '''
-    response1 = client.simulate_get('/ssh/key')
+    response1 = client.simulate_post('/ssh/key')
 
     private_key1 = serialization.load_pem_private_key(
         response1.json['privateKey'].encode('utf-8'),
@@ -91,7 +91,7 @@ def test_key_creation(client):
         backend=default_backend()
     )
 
-    response2 = client.simulate_get('/ssh/key', query_string='keySize=4096')
+    response2 = client.simulate_post('/ssh/key', query_string='keySize=4096')
 
     private_key2 = serialization.load_pem_private_key(
         response2.json['privateKey'].encode('utf-8'),
@@ -113,7 +113,7 @@ def test_too_small_key_size(client):
     '''
     Test for too small key size passed in. RSA keys have minimum 768 size.
     '''
-    response = client.simulate_get('/ssh/key', query_string='keySize=512')
+    response = client.simulate_post('/ssh/key', query_string='keySize=512')
 
     too_small = {
         'title': 'Invalid parameter',

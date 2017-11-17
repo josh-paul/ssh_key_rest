@@ -13,27 +13,8 @@ from falcon.media.validators import jsonschema
 logging = logging.getLogger(__name__)
 
 
-post_schema = {
-    'type': 'object',
-    'properties': {
-        'publicKey': {
-            'description': 'the public key in OpenSSH format',
-            'type': 'string'
-        }
-    },
-    'required': ['publicKey']
-}
-
-
 class KeyResource(object):
-    def fingerprint(self, key):
-        '''
-        Returns the md5 fingerprint of the passed in key.
-        '''
-        digest = hashlib.md5(key).hexdigest()
-        return ':'.join(a + b for a, b in zip(digest[::2], digest[1::2]))
-
-    def on_get(self, request, response):
+    def on_post(self, request, response):
         '''
         Generate and return a private and public key for use with OpenSSH. Default key size is 2048
         Can be modified via query string arg keySize.
@@ -58,7 +39,28 @@ class KeyResource(object):
         }
         response.status = falcon.HTTP_201
 
-    @jsonschema.validate(post_schema)
+
+fingerprint_post_schema = {
+    'type': 'object',
+    'properties': {
+        'publicKey': {
+            'description': 'the public key in OpenSSH format',
+            'type': 'string'
+        }
+    },
+    'required': ['publicKey']
+}
+
+
+class FingerprintResource(object):
+    def fingerprint(self, key):
+        '''
+        Returns the md5 fingerprint of the passed in key.
+        '''
+        digest = hashlib.md5(key).hexdigest()
+        return ':'.join(a + b for a, b in zip(digest[::2], digest[1::2]))
+
+    @jsonschema.validate(fingerprint_post_schema)
     def on_post(self, request, response):
         '''
         Read in json body. For publicKey, validate, then return OpenSSH fingerprint and the EC2
@@ -92,7 +94,7 @@ class KeyResource(object):
                     base64.b64decode(valid.decode('utf-8').split()[1].encode('ascii'))
                 )
             }
-            response.status = falcon.HTTP_200
+            response.status = falcon.HTTP_201
         except (binascii.Error, ValueError):
             response.media = {'error': 'Key is not in the proper format or contains extra data.'}
             response.status = falcon.HTTP_400

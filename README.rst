@@ -40,56 +40,86 @@ Sample usage of the API.
 
     In [1]: import requests
 
-    In [2]: url = 'https://ne6vxja6h7.execute-api.us-east-1.amazonaws.com/josh/ssh/key'
+    In [2]: base_url = 'https://16jtpla2ek.execute-api.us-east-1.amazonaws.com/josh'
 
-    In [3]: get = requests.get(url)
+    In [3]: key = requests.post(f'{base_url}/ssh/key?keySize=4096')
 
-    In [4]: get.json()
+    In [4]: key.json()
     Out[4]:
     {'privateKey': 
         '-----BEGIN RSA PRIVATE KEY-----\n
-        MIIEpQIBAAKCAQEA9YNLdHlF+/4L2Lcwa1tTam8iRxFIE2ylkmH9MrrCalaQrjze\n
-        l3FJD1TqkrEf0dDUtTmcQuEgGJnavfs17k5rUCb0y5fQnkqN4erN/RW9rtuGx5Wt\n
-        weuSSuCodW0Hq7yq5x81YTA+v52cbdmshRXxyLlvjJPkPQL0bwDffnbQul2Q1QW/\n
-        X4oOkotNzt0y9FEbrZpNRZyDYwFHDu2PJkV0FI47eLt+NG+heD3qsav8UG7IP9dv\n
-        gBIBqMwSGuuJqADOgEHrWYk7U6Vyv8hYylctYz/9im9UZgRDHaWJDBEqV+dxx1hF\n
-        NC/1Ki6vdnxW7m9Qqi19QPUO4QQfIyB4vEyVQwIDAQABAoIBAQC+AX7EBZdEDrjc\n
-        X+n5LBTCqn+8wIMnhU4em/d461DLO3N9ZV5fli0U0IM6RBp8J0J3fr6Qg+pzH59K\n
-        qMB0Tfx/a6bIahXqa4ii7zW8SLckPIFytURkcAwoJvY46silAL7DYEPPk6b8ZN5L\n
-        pcr+tJ0K23iZM1vQXBkQT3yoQwwHLh54A4OSDS+ih5W37AoS7DhtmZ+/WEH/rzyJ\n
-        RgvawpE64vqEqyW+1kg1ds6mIb7niVhW/sgmo0Cn4gZpR1Zo6bU8cfdxk52feQ3r\n
-        hN/STQ7qDbYmTH257HetH5OHhDPsc3OU4/ZipVjuwX0GdUMQrC3xR/SMuhiKv2hv\n
-        XyjuqIIBAoGBAP0F5qrwVQrJbkA91cxunlrN08prEl2TdtGItOgjLrb9ffTko7VL\n
-        FnUJOHTu4NYg6kW4+ta4bwQwrRaZBHGDLfopLuLVBZYLhD3CQPMsIc3uGHg7AD7t\n
-        xo2fjU3LXvCAC4wHrtEheCl9L0HZQ7XQHFyMP5m51/kcGClfJa23sW/pAoGBAPhm\n
-        xfI+/cS3Os+MLLM/KmDN6vIsJQh0rtGgDO/Z1HURTv8mjsSpaKSz1NLO/GK04v8N\n
-        cqXVytjpKtzDPx8Bxj2dx/2ETAIOWszKZUKdLKUdeB2EZbIbKEzdG/FnqbBPgPb9\n
-        FHr8IKQA2g8WlmvJ78p1hVwTEo9dboc3Gde1NuxLAoGBAJShvMi5eRtnDE7MhCUc\n
-        7gTlV/5WO2mg0HFx3uNml3CDJFSRYuGChGSnz/RQxt7CYxwl96Pen8hUV7kolgWg\n
-        S4fiXVp+TFPB3CLzU3gFeq4fqVwnPJO61aIoEbebOeAJN79AXB8ZjB7DHNmPqUjK\n
-        QX7UHCBPnWEGceMLs3SCrcbRAoGBAJkYfpe3SyCa7ZxNgJ9ZJv1S7KMlog18HOMG\n
-        CfMqBk/AwzduxD9hSiV40Iq9F8CeS+l2mFqtUcAutUQq8hRiO5RuUnxltZLu1fey\n
-        JobP6Fw7tXQ7zZHgOw5kmHxIr8UCuzF++chy7IsoGz2BZmQ4qZnWpMMC3kWOCDk+\n
-        NKdGAPvRAoGAV20eiTYeyQYCaA2lznF2UHpn/gcJq5mGEpczl4YeEoI4PBIGP8sa\n
-        9oZI5GqqcQAnPrTWNSFqOn2GlWuRNOGu+VFVJvI4mV5ruwcMCZj3F+BAG5H4QA28\n
-        eFcAhSbOFVtb7beORGQEcAxhLvCfL2TbbkG+hPjnW9b3aFxAk3wm7xs=\n
+        MIIJJwIBAAKCAgEA8ZOXFguCXuCJ/baPcrGxuZ7Wv1Tq8hklg4Sr48koTQcC/3P6\n
+        38Fdt4KyUCbJLURjOsrLfUqjrR4+nbLCl5/sOgaPps0lBmTOFpIFLKu8UDwhBYU/\n
+        DgL+Hq2lzrBpB+GXkliFgZ6qQnLsX8ockesbc8lpIuPFdWRcCbM56KMuvQl8VB3e\n
+        Eau3lqSGloLToVEGRyQa1bgi510XqWan0Us2sG4kP0A2U7JjAC8gCMCjOsS8L3Mw\n
+        x2Tz4O0gTQGsVGkWv1H2345ojhV9pwU92tVcplQ8FfpAmMsAS2KOLev/weUV8+f2\n
+        SkDWTgxqXPGb/v/5Kt4iDhXQaLqT/LSzxG1NMBkYL7HiRF8zkPcOe44xSMzDc9lI\n
+        F6k8/Vfb3twu1nXlnI7t/K4v7tx42eRwvKfn0WY8dFVJKxRIxPvcCZuyuiiht4Yv\n
+        8D8Nb3Usj9QYvL89gdBfwlVZwzxQYcjapKq1uZ8B8uW/NFblqwgffNeH14X2OQEa\n
+        i8V6VTnsOtGlDk7mVeaWTgrIRMQXa24vLZTmgTEIVgKmZbzFpuSYJdbRcfIgp+SM\n
+        h+B/11GLLW0iSwZqxwuVap12ptcwWImp7BHj6hPS0+9IlCgl0z8Y2aGoRPt+U1ZI\n
+        /aBx4fVS7aWf6x5d0aDUr2Y0O90XeVH5fHYmCBqFna/KNDmdtP5T20Qqe1ECAwEA\n
+        AQKCAgBgfNKbu30W6Bg1ffVNmiuiOA8N3Jz6lZCmNxdwo6e1HFfWMDzDojgMU+dk\n
+        nBk+O1Jm6RjdsjItsybPVdbjOLzhcD1wIf/nzduCqE/ox68vXNTTn6TPs+JL3o+b\n
+        Plq1CyW/DhxE6VqXr885c0B2B7GvTYLwrIjxmmQoe61lfcftORyvfD52UF/Di3M2\n
+        Korco8AeKg2Nzz4hqs0InDfrIF93mIZhvQP16gogyLHCzS5lCq8fRKL3ARtne06r\n
+        cz+hd1fekp5ILFkWZv8I9s792LpotLxLCulCHdLASV0AeoJsr1NVWBDHF56BDfRt\n
+        qxLjhtm+hXqUpaHYMq1pAcPLcNyi0rgJlwoxntCFNjOX08zqQYeDdk1ik451MfmC\n
+        Pb3f2p8u25zwwwQsKvwsc396xi3YkEFtFKrqLPji+Mrew+4fvVvPXDew6u47u2Cf\n
+        XLmTBNQI5r8zwq+2KF0nBedtAznyxAPHqbtLAungqruUp0I0e6uDTRuOqxgdDkdg\n
+        HOWXsfZPx5r5LwgYiUpnku6KKcy9jsGOtzV9aXbt5ufwVxDS/ZB4kxktvkt3iTIW\n
+        54ZwDTHb86XXOjHcvd8Y5W8SdDMk5IhjhUsnyxLsqyZE0wZWv9jUcWCJjHDuZSFM\n
+        Nh12b+5cjnOamGbCAOrRuco+zjotD4Yc7anMgZRBuE/XW3iFAQKCAQEA+4CbaruN\n
+        ehDlV4JMwQNpOdOZ0jElKh3HrAXheBRSyGlJJ77oosgUJhNjUYFXPtHpIKXuUHg0\n
+        W50cXSsKaNEYWeDLy3vWaGp2F+n9yZszK9FXDjQXjAmtLe1szRb7cilV2Fg8F4T2\n
+        87y0gqxQdlMGzxW0jmcIr10g7TAGv///M4TMPXdrijAwL0czL2wM0eI8BMAFZu4L\n
+        x20G1etlZh2mPLi1ZD/NBppiPicpjtauCJhZdEHksG0cK2SmcLKJa6c7bjKFqsxw\n
+        IgjOO5ZYp12XwIi2/GCLAJAt2oOMdRYEqEEmuS03VEuNrM5LpwGyrxK84aea+Wcp\n
+        IwlDIWH08FMQowKCAQEA9eWKveHHZM0xgPKyK/WPULqZlGHQX/jxcSs60QMQ5TOg\n
+        cRVLcElZT/ozwrN7QyIf/zsqazthhQCgn36xcLiZPtYT3a+XTyJIcuPLprnIzyDs\n
+        N8OBdRfS2P6o55f5jApMAtfq7/+DgfBIUJi7//c0QYSEhS1LUJIryY/vfT8laNuT\n
+        EdtHLVWowOlnhyb9eO86469NjKgwWFrmfoAVkx3KUOmbxtrOBmcfH4B+TCt1/h3C\n
+        +ZPi383a8pCjB/0ZEndF4yYsVY3Z8sL342cexjs/AildCKWGNsgXaOVuGtmU9hCn\n
+        LjmIOfRQifrBpvBZf8objr5Hrs9iStYiP6sEkudfewKCAQBwOccgLWjIG1n7Xo1Z\n
+        Y2hFAYMWJA/tZzR+MnGV35vBCho2vh2Y5ab4Bpa++/QueASLKP/asIjMiKLrgBU5\n
+        CHTRRloqBqx6E2d27Fbu624+Ez/BesU3G+pHIDb4nVS+cGt6CoVmCVMZGA+Eb9fH\n
+        tOzI42qaUKezeN8Ed/XLHzSFjLCGjQ9TroUR07enZZOi5Ezb4cOHVpmy95ehRVUN\n
+        6BUR62olvcKDO8iy607ECk/GThU8p1qgz09Ona8XgtOHUixW0/yJZohy53L/a+tL\n
+        Y5wfseHVZE8ihTOw2hqG9LhHTCs3XlHeL4icn8FqWHufW8ElAGFLARl+JNfrwYZG\n
+        5wn5AoIBAHVphmcGcMwcAmA9AoBk/2qfvweP8QxydO8BolL88MtQbHKypVPXYjMD\n
+        GEYGp3u1xqt7V9TeBMGaPBgMSbO2IU5UsCWxW0Fo8EkTpkFVAqKMaN5zltQPbRk5\n
+        9/KlqX2JySOub7rrOaMI1a7OTy54nlYObaydpRGyyf+zn7ohNb6s4busBX+LIEoE\n
+        6O8q2est5+Oh6BiakoMN3HNYu3SEy/74nO5FugxqnvzOwP+j3PJayaecSr9srvgV\n
+        whLlclxT4WYF6zNqyT/WgsDtk086KOriT076omxz/GGU848Uh8E60GkNBZQOqYpI\n
+        1sDckQ+otKHjD51T3u428yGNimCO5BMCggEARdQM/BbZV/pZ0kPo9HReLO4BoQsZ\n
+        qZoZ4+SRT9fT7bRVUoinHNi7SGEmZ4EQ948A6RLDsu1auyazyoh11caS0vNKEP31\n
+        OzbaCqVGTnN475/pBIeDhO1NCOUBxEmsDi3ge/Ckc4M2OWbjBM4Q9H7Pfnk6haDC\n
+        Dr9nFASpy8wZsCxxe2razXs5IAO3CzoipKBeLtniDr12GT0335aF3MdF4jrRX6YR\n
+        jNQ+/r70ksw7uF3wdWy301lQIfFNUzI7pEcCLZv3rN1GLs72h9OxtOA6BVQBNzEM\n
+        rNMtmEA+49MNBBjkUqHk6e6rTATcoyZqXkygruuXJNQIzuQrk4RFeV5tuQ==\n
         -----END RSA PRIVATE KEY-----\n',
-     'publicKey': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD1g0t0eUX7/gvYtzB
-        rW1NqbyJHEUgTbKWSYf0yusJqVpCuPN6XcUkPVOqSsR/R0NS1OZxC4SAYmdq9+zXuT
-        mtQJvTLl9CeSo3h6s39Fb2u24bHla3B65JK4Kh1bQervKrnHzVhMD6/nZxt2ayFFfH
-        IuW+Mk+Q9AvRvAN9+dtC6XZDVBb9fig6Si03O3TL0URutmk1FnINjAUcO7Y8mRXQUj
-        jt4u340b6F4Peqxq/xQbsg/12+AEgGozBIa64moAM6AQetZiTtTpXK/yFjKVy1jP/2
-        Kb1RmBEMdpYkMESpX53HHWEU0L/UqLq92fFbub1CqLX1A9Q7hBB8jIHi8TJVD'
+     'publicKey': 
+        'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDxk5cWC4Je4In9to9ysbG5nta/VO
+        ryGSWDhKvjyShNBwL/c/rfwV23grJQJsktRGM6yst9SqOtHj6dssKXn+w6Bo+mzSUGZ
+        M4WkgUsq7xQPCEFhT8OAv4eraXOsGkH4ZeSWIWBnqpCcuxfyhyR6xtzyWki48V1ZFwJ
+        sznooy69CXxUHd4Rq7eWpIaWgtOhUQZHJBrVuCLnXRepZqfRSzawbiQ/QDZTsmMALyA
+        IwKM6xLwvczDHZPPg7SBNAaxUaRa/UfbfjmiOFX2nBT3a1VymVDwV+kCYywBLYo4t6/
+        /B5RXz5/ZKQNZODGpc8Zv+//kq3iIOFdBoupP8tLPEbU0wGRgvseJEXzOQ9w57jjFIz
+        MNz2UgXqTz9V9ve3C7WdeWcju38ri/u3HjZ5HC8p+fRZjx0VUkrFEjE+9wJm7K6KKG3
+        hi/wPw1vdSyP1Bi8vz2B0F/CVVnDPFBhyNqkqrW5nwHy5b80VuWrCB9814fXhfY5ARq
+        LxXpVOew60aUOTuZV5pZOCshExBdrbi8tlOaBMQhWAqZlvMWm5Jgl1tFx8iCn5IyH4H
+        /XUYstbSJLBmrHC5VqnXam1zBYiansEePqE9LT70iUKCXTPxjZoahE+35TVkj9oHHh9
+        VLtpZ/rHl3RoNSvZjQ73Rd5Ufl8diYIGoWdr8o0OZ20/lPbRCp7UQ=='
     }
 
-    In [5]: data = {'publicKey': get.json()['publicKey']}
+    In [5]: data = {'publicKey': key.json()['publicKey']}
 
-    In [6]: post = requests.post(url, json=data)
+    In [6]: fingerprint = requests.post(f'{base_url}/ssh/key/fingerprint', json=data)
 
-    In [7]: post.json()
+    In [7]: fingerprint.json()
     Out[7]:
-    {'ec2': 'd9:f9:ee:6b:f4:8f:9b:b1:7a:fd:9e:53:34:86:0e:ca',
-     'openSSH': '71:99:3f:4d:bc:83:0a:a1:ce:4f:d4:be:bd:4a:89:11'}
+    {'ec2': 'a8:9b:9b:71:85:d8:5a:1d:57:87:5d:ea:28:0f:35:14',
+     'openSSH': 'df:13:e9:f0:1d:22:08:73:18:1e:a9:a4:f9:69:cd:82'}
 
 Sample usage of the yolo utility to deploy the infra / build/deploy the lambda service.
 
